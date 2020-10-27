@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Include meta tag to ensure proper rendering and touch zooming -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Include jQuery Mobile stylesheets -->
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <!-- Include the jQuery library -->
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <!-- Include the jQuery Mobile library -->
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/databaseHandler.js"></script>
+    <script type="text/javascript" src="js/productHandler.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <title>Hello World</title>
+</head>
+<body>
+<div data-role="page" id="addpage">
+    <div data-role="panel" id="addPagePanel">
+        <h1>I-RATE</h1>
+        <ul data-role="listview" data-inset="true">
+            <li data-role="list-divider">Home</li>
+            <li data-icon="plus"><a href="#addpage">Add Restaurant Rating</a></li>
+            <li data-icon="grid"><a href="#loadpage">Modify Rating</a></li>
+        </ul>
+    </div>
+    <div data-role="header" data-position="fixed">
+        <a href="#addPagePanel"
+           class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all ui-shadow"></a>
+        <h1>Add product</h1>
+    </div>
+    <div data-role="main" class="ui-content">
+        <form>
+            <div class="ui-field-contain">
+                <label for="txtRestaurantName">Restaurant name(*) :</label>
+                <input type="text" id="txtRestaurantName" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+                <label for="txtReporterName">Reporter name(*) :</label>
+                <input type="text" id="txtReporterName" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+                <label for="txtAveragePrice">Average Price(*) :</label>
+                <input type="text" id="txtAveragePrice" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+                <label for="txtDateVisit">Date Visited(*) :</label>
+                <input type="text" id="txtDateVisit" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+                <label for="restaurantType">Restaurant Type(*) :</label>
+                <select name="restaurantType" id="restaurantType">
+                    <option value="">--Choose--</option>
+                    <option value="Grill">Grill</option>
+                    <option value="Fast food">Fast food</option>
+                    <option value="See food">Sea food</option>
+                </select>
+                <label for="serviceRating">Service Rating(*) :</label>
+                <select name="serviceRating" id="serviceRating">
+                    <option value="">--Choose--</option>
+                    <option value="Need to improve">Need to improve</option>
+                    <option value="OKAY">OKAY</option>
+                    <option value="Good">Good</option>
+                    <option value="Excellent">Excellent</option>
+                </select>
+                <label for="cleanlinessRating">Cleanliness rating(*) :</label>
+                <select name="cleanlinessRating" id="cleanlinessRating">
+                    <option value="">--Choose--</option>
+                    <option value="Need to improve">Need to improve</option>
+                    <option value="OKAY">OKAY</option>
+                    <option value="Good">Good</option>
+                    <option value="Excellent">Excellent</option>
+                </select>
+                <label for="foodQualityRating">Food Quality Rating(*) :</label>
+                <select name="foodQualityRating" id="foodQualityRating">
+                    <option value="">--Choose--</option>
+                    <option value="Need to improve">Need to improve</option>
+                    <option value="OKAY">OKAY</option>
+                    <option value="Good">Good</option>
+                    <option value="Excellent">Excellent</option>
+                </select>
+                <label for="txtNote">Note :</label>
+                <input type="text" id="txtNote" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+
+                <label for="btnAdd"></label>
+                <a class="ui-btn ui-icon-plus ui-btn-icon-left"
+                   id="btnAdd" onclick="addProduct()">Add</a>
+            </div>
+        </form>
+    </div>
+    <div data-role="footer" data-position="fixed">
+        <h1>I-RATE</h1>
+    </div>
+</div>
+<div data-role="page" id="loadpage">
+    <div data-role="panel" id="loadPagePanel">
+        <h1>I-RATE</h1>
+        <ul data-role="listview" data-inset="true">
+            <li data-role="list-divider">Home</li>
+            <li data-icon="plus"><a href="#addpage">Add Restaurant Rating</a></li>
+            <li data-icon="grid"><a href="#loadpage">Modify Rating</a></li>
+        </ul>
+    </div>
+    <div data-role="header" data-position="fixed">
+        <a href="#loadPagePanel"
+           class="ui-btn ui-icon-bars ui-btn-icon-notext ui-corner-all ui-shadow"></a>
+        <h1>Rating lists</h1>
+    </div>
+    <div data-role="main" class="ui-content">
+        <form class="ui-filterable">
+            <input data-type="search" id="txtKeyword"/>
+        </form>
+        <ul data-role="listview" data-filter="true"
+            data-input="#txtKeyword"
+            data-inset="true"
+            id="lstProducts"
+        >
+        </ul>
+        <div data-role="popup" id="popupUpdateDelete">
+            <div data-role="header">
+                <a class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all" data-rel="back"></a>
+                <h1>Options</h1>
+            </div>
+            <div data-role="main" class="ui-content">
+                <a class="ui-btn ui-icon-delete ui-btn-icon-left ui-btn-inline"
+                   onclick="deleteProduct()"
+                >Delete</a>
+                <a class="ui-btn ui-icon-edit ui-btn-icon-left ui-btn-inline"
+                   href="#updatedialog"
+                >Update</a>
+            </div>
+        </div>
+
+    </div>
+    <div data-role="footer" data-position="fixed">
+        <h1>I-RATE</h1>
+    </div>
+</div>
+<div data-role="dialog" id="updatedialog">
+    <div data-role="header">
+        <h1>Update product</h1>
+    </div>
+    <div data-role="main" class="ui-content">
+        <form>
+            <div class="ui-field-contain">
+                <label for="txtNewRestaurantName">Restaurant name(*) :</label>
+                <input type="text" id="txtNewRestaurantName" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+                <label for="txtNewReporterName">Reporter name(*) :</label>
+                <input type="text" id="txtNewReporterName" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+                <label for="txtNewAveragePrice">Average Price(*) :</label>
+                <input type="text" id="txtNewAveragePrice" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+                <label for="txtNewDateVisit">Date Visited(*) :</label>
+                <input type="text" id="txtNewDateVisit" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+                <label for="restaurantType">Restaurant Type(*) :</label>
+                <select name="newRestaurantType" id="newRestaurantType">
+                    <option value="">--Choose--</option>
+                    <option value="Grill">Grill</option>
+                    <option value="Fast food">Fast food</option>
+                    <option value="See food">Sea food</option>
+                </select>
+                <label for="newServiceRating">Service Rating(*) :</label>
+                <select name="serviceRating" id="newServiceRating">
+                    <option value="">--Choose--</option>
+                    <option value="Need to improve">Need to improve</option>
+                    <option value="OKAY">OKAY</option>
+                    <option value="Good">Good</option>
+                    <option value="Excellent">Excellent</option>
+                </select>
+                <label for="newCleanlinessRating">Cleanliness rating(*) :</label>
+                <select name="cleanlinessRating" id="newCleanlinessRating">
+                    <option value="">--Choose--</option>
+                    <option value="Need to improve">Need to improve</option>
+                    <option value="OKAY">OKAY</option>
+                    <option value="Good">Good</option>
+                    <option value="Excellent">Excellent</option>
+                </select>
+                <label for="newFoodQualityRating">Food Quality Rating(*) :</label>
+                <select name="foodQualityRating" id="newFoodQualityRating">
+                    <option value="">--Choose--</option>
+                    <option value="Need to improve">Need to improve</option>
+                    <option value="OKAY">OKAY</option>
+                    <option value="Good">Good</option>
+                    <option value="Excellent">Excellent</option>
+                </select>
+                <label for="txtNewNote">Note :</label>
+                <input type="text" id="txtNewNote" data-clear-btn="true" pattern="^[A-Za-z0-9]+$" required minlength="3" maxlength="25"/>
+                <label for="btnUpdate"></label>
+                <a class="ui-btn ui-icon-plus ui-btn-icon-left"
+                   id="btnUpdate" onclick="updateProduct()">Update</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
